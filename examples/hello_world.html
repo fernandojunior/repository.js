@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<script src="../jquery.js"></script>
+<script src="../prototype_class.js"></script>
+<script src="../repository.js"></script>
+
+<script type="application/javascript">
+    
+    var HelloWorldView = BaseView.extend({
+        prototype : {
+            
+            api: "get", // request the API with get method
+            
+            // view initializer
+            initialize: function(){
+                document.getElementById("content").innerHTML = "Hello ";
+            },
+            
+            before: function(){
+                alert("Before send the call to the API");
+                return true; // call the API
+            }
+            
+            // API callback
+            callback: function(response){
+                // callback error           
+            },
+            
+            // after the callback
+            after: function(){
+                var content = document.getElementById("content");
+                content.innerHTML += "World";
+            },
+            
+            // RESTFUL API respository
+            repository: RESTRepository.create({root_path: "https://github.com/fernandojunior"})
+            
+        }
+    });    
+    
+    function onload(){
+        var hw = HelloWorldView.create();
+        hw.render();        
+    }
+   
+</script>
+
+<body onload="onload()">
+    
+    <div class=page>
+        
+        <h1>Orders</h1>
+
+        <div id="content">
+            
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<script src="jquery.js"></script>
+<script src="sammy.js"></script>
+<script src="prototype_class.js"></script>
+<script src="repository.js"></script>
+
+<!--
+
+    This example uses jQuery for content (html) render and Sammy.js for url routes.
+    prototype_class.js is a dependecy of repository.js
+ 
+ -->
+
+<script>
+    
+    /**
+    * View container for orders
+    * Obs: http://example.com/api/orders/ is not a real REST API.
+    **/
+    var OrderViews = BaseViewContainer.extend({
+
+        // RESTFUL API Repository for orders
+        repository: RESTRepository.create({root_path: "http://example.com/api/orders/", async: true}),
+
+        // view class that will render the content with order list
+        index: BaseView.extend({
+
+            prototype: {
+
+                // call the get method of API
+                api: "get", 
+
+                // API callback
+                callback: function(response){
+                    $("#content").html("Index html" + JSON.stringify(response)); // redering the content
+                }
+            }
+
+        }),
+
+        // view class that will render the content with a order
+        get: BaseView.extend({
+
+            prototype: {
+
+                api: "get",
+
+                // view initializer
+                initialize: function(args) {
+                    this.data = {id: args.id}; // setting the request data
+                },
+
+                // before call the API
+                before: function(){
+
+                    if (typeof(this.data.id ) === "undefined"){
+                        OrderViews.render("index"); // redirecting
+                        return false; // don't callback
+                    }
+
+                    return true; // callback
+                },
+
+                callback: function(response){
+
+                    $("#content").html(JSON.stringify(response));
+
+                }
+            }
+
+        }),
+
+        // view class that will create a new order
+        post: BaseView.extend({
+            prototype: {
+                api: "post",
+
+                initialize: function(args){
+                    this.data = {data: args.data}; // data of the request
+                }
+            }
+
+        }),
+
+        // view class that will render the content with the order edit form 
+        get_edit_form: BaseView.extend({
+            prototype: {
+                api: "get",
+
+                initialize: function(args){
+                    this.data = {id: args.id};
+                },
+
+                callback: function(response){
+                    $("#content").html("html edit form" +  JSON.stringify(response));
+                }    
+            }
+        }),
+
+        // view class that will update a resource
+        put: BaseView.extend({
+            prototype: {
+                api: "put",
+
+                initialize: function(args){
+                    this.data = {id: args.id, data: args.data};
+                },
+
+                callback: function(response){
+                    $("#content").html(JSON.stringify(response));
+                }    
+            }
+        }),
+
+        // view class that will delete a resource
+        delete: BaseView.extend({
+            prototype: {
+                api: "delete",
+
+                initialize: function(args){
+                    this.data = {id: args.id};
+                },
+
+                callback: function(response){
+                    $("#content").html(JSON.stringify(response));
+                }
+            }
+        })
+    })
+    
+
+</script>
+
+<!-- Routes with sammy.js -->
+<script type="text/javascript" charset="utf-8">
+
+    var app = $.sammy(function() {
+
+        this.get('#/', function() {            
+            OrderViews.render("index");
+        });
+
+        this.post('#/', function() {
+            OrderViews.render("post", {data: this.params});
+            this.redirect('#/');
+        });
+
+        this.get('#/:id', function() {
+            OrderViews.render("get", {id: this.params['id']});
+        });
+
+        this.get('#/:id/edit', function() { 
+            OrderViews.render("get_edit_form", {id: this.params['id']});
+        });
+
+        this.put('#/:id/edit', function() { 
+            OrderViews.render("put", {id: this.params['id'], data: this.params});
+            this.redirect('#/');            
+        });
+
+        this.get('#/:id/delete', function() {
+            OrderViews.render("delete", {id: this.params['id']});
+            this.redirect('#/');
+        });
+
+    });
+
+    $(function() {
+        app.run();
+    });
+    
+</script>
+
+<body>
+    
+    <div class=page>
+        
+        <h1>Orders</h1>
+
+        <div id="content">
+        </div>
+    </div>
+
+</body>
+</html>
