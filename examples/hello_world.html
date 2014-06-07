@@ -17,13 +17,18 @@
             },
             
             before: function(){
-                alert("Before send the call to the API");
+                console.log("Before send the call to the API");
                 return true; // call the API
-            }
+            },
             
             // API callback
             callback: function(response){
                 // callback error           
+            },
+        
+            // API error callback
+            error_callback: function(r){
+                console.log("forced erro");
             },
             
             // after the callback
@@ -33,19 +38,19 @@
             },
             
             // RESTFUL API respository
-            repository: RESTRepository.create({root_path: "https://github.com/fernandojunior"})
+            repository: RESTRepository.create({root_path: "https://gist.github.com/fernandojunior"})
             
         }
     });    
     
-    function onload(){
+    function init(){
         var hw = HelloWorldView.create();
         hw.render();        
     }
    
 </script>
 
-<body onload="onload()">
+<body onload="init()">
     
     <div class=page>
         

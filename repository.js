@@ -91,14 +91,15 @@ var RESTRepository = BaseRepository.extend ({
         * Chama o method GET da API para obter informacao de uma lista de recursos ou de apenas um recurso especifico.
         * @param args.id Se nao for definido, todos os recursos da API serao trazidos como resposta. Caso for definido, apenas o recurso com o ID especificado sera trazido como resposta a chamada da API
         * @param callback A funcao de callback para a chamada. Aceita um argumento, na qual sera a resposta da API
+        * @param error_callback A funcao de callback error para a chamada. Aceita um argumento, na qual sera a resposta da API
         **/
-        get: function(args, callback) {
+        get: function(args, callback, error_callback) {
             var id = args.id;
 
             if (typeof(id) === "undefined") {
-                return this.call({url: "/"}, callback);
+                return this.call({url: "/"}, callback, error_callback);
             } else {
-                return this.call({url: "/" + id}, callback);
+                return this.call({url: "/" + id}, callback, error_callback);
             }
 
         },
@@ -107,11 +108,12 @@ var RESTRepository = BaseRepository.extend ({
         * Chama o method POST da API para criar um novo recurso.
         * @param args.data Os dados do novo recurso que serao enviados pela requisicao para API
         * @param callback A funcao de callback para a chamada. Aceita um argumento, na qual sera a resposta da API
+        * @param error_callback A funcao de callback error para a chamada. Aceita um argumento, na qual sera a resposta da API
         **/
-        post: function(args, callback) {
+        post: function(args, callback, error_callback) {
             var data = args.data;
 
-            return this.call({url: "/", type: "post", data: data}, callback);
+            return this.call({url: "/", type: "post", data: data}, callback, error_callback);
         },
 
         /**
@@ -119,23 +121,25 @@ var RESTRepository = BaseRepository.extend ({
         * @param args.id O id do recurso a ser atualizado
         * @param args.data Os dados do recurso a ser atualizado que serao enviados pela requisicao para API
         * @param callback A funcao de callback para a chamada. Aceita um argumento, na qual sera a resposta da API
+        * @param error_callback A funcao de callback error para a chamada. Aceita um argumento, na qual sera a resposta da API
         **/
-        put: function(args, callback) {
+        put: function(args, callback, error_callback) {
             var id = args.id;
             var data = args.data;
 
-            return this.call({url: "/" + id, type: "put", data: data}, callback);
+            return this.call({url: "/" + id, type: "put", data: data}, callback, error_callback);
         },
 
         /**
         * Chama o method DELETE da API para remover um determinado recurso.
         * @param args.id O id do recurso a ser removido
         * @param callback A funcao de callback para a chamada. Aceita um argumento, na qual sera a resposta da API
+        * @param error_callback A funcao de callback error para a chamada. Aceita um argumento, na qual sera a resposta da API
         **/
-        delete: function(args, callback) {    
+        delete: function(args, callback, error_callback) {    
             var id = args.id;
 
-            return this.call({url: "/" + id, type: "delete"}, callback);
+            return this.call({url: "/" + id, type: "delete"}, callback, error_callback);
         },
 
         /**
@@ -146,7 +150,7 @@ var RESTRepository = BaseRepository.extend ({
         * @param callback (opcional) Funcao de callback a ser executada com a resposta da api
         * @return (if this.async === false) Retorna o resultado da chamada a api
         **/
-        call: function(args, callback){
+        call: function(args, callback, error_callback){
             var url = args.url;
             var type = args.type;
             var data = args.data;
@@ -184,6 +188,11 @@ var RESTRepository = BaseRepository.extend ({
                 dataType: 'json',
                 data: data,
                 error: function (jqXHR) {
+                    
+                    if(error_callback !== null && typeof error_callback !== "undefined"){
+                        error_callback(jqXHR);
+                    }
+                    
                     console.log("ajax error " + jqXHR.status);
                 }
 
@@ -212,6 +221,7 @@ var RESTRepository = BaseRepository.extend ({
             var method = args.method;
             var method_args = args.data;
             var callback = args.callback;
+            var error_callback = args.error_callback;
             
             if(method == null || typeof(method) === "undefined") {
                 method = "get"; // default method
@@ -221,7 +231,7 @@ var RESTRepository = BaseRepository.extend ({
                 method_args = {};
             }
 
-            this[method](method_args, callback);
+            this[method](method_args, callback, error_callback);
 
         }
     }
@@ -256,6 +266,12 @@ var BaseView = PrototypeClass.extend({
         * @param response Contem a resposta da execucao do metodo da api
         **/
         callback: null,
+        
+        /**
+        * Funcao callback error do metodo da api
+        * @param response Contem a resposta da execucao do metodo da api
+        **/
+        error_callback: null,
 
         /**
         * Funcao que eh executada apos o metodo da api
@@ -287,7 +303,8 @@ var BaseView = PrototypeClass.extend({
                     obj.repository._factory({
                         method: obj.api,
                         data: obj.data,
-                        callback: obj.callback
+                        callback: obj.callback,
+                        error_callback: obj.error_callback
                     });
                 }
 
