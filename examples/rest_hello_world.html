@@ -1,8 +1,9 @@
 <!doctype html>
 <html>
-<script src="../jquery.js"></script>
-<script src="../prototype_class.js"></script>
+<script src="../vendors/jquery.js"></script>
+<script src="../vendors/prototype_class.js"></script>
 <script src="../repository.js"></script>
+<script src="../repositories/rest.js"></script>
 
 <script type="application/javascript">
     
@@ -28,7 +29,7 @@
         
             // API error callback
             error_callback: function(r){
-                console.log("forced erro");
+                console.log("forced error");
             },
             
             // after the callback
