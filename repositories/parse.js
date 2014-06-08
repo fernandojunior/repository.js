@@ -3,7 +3,7 @@
 * https://parse.com/docs/js_guide
 **/
 var ParseRepository = BaseRepository.extend({
-    
+
    prototype: {
        
        /**
@@ -127,6 +127,41 @@ var ParseRepository = BaseRepository.extend({
            });
            
            return;
+       },
+       
+       postFile: function(args, callback, error_callback){
+           
+           var name = args.name;
+           var ext = args.ext;
+           var content_type = args.content_type;
+           var file_upload_control = args.file_upload_control;
+           
+           console.log(name + ext + " " + content_type);
+           
+           if (file_upload_control.files.length > 0) {
+               
+               var file = file_upload_control.files[0];
+               var parseFile = new Parse.File(name + ext, file, content_type);
+
+               parseFile.save().then(
+                   function(response){
+                       console.log("file saved");
+                       console.log(response.url());
+                       if (callback !== null && typeof callback !== "undefined"){
+                           callback();
+                       }
+                    },
+                   function(error){
+                       console.log("did not  saved");
+                       if (error_callback !== null && typeof error_callback !== "undefined"){
+                           error_callback(error);
+                       }
+                   }
+               );
+            }
+           
+           return;
+       
        },
        
        delete: function(args, callback, error_callback){
