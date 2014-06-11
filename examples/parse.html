@@ -27,6 +27,20 @@
     });
 
     repository.get({id: "8Z384wpZmB"});
+    
+    /**
+    * Loggin do usuario no parse pelo facebook
+    **/
+    function facebook_login() {
+        var repository = ParseRepository.g.facebook_user;
+
+        function show_response(response){
+            console.log(JSON.stringify(response));
+        }
+
+        // permissions: permissoes do facebook
+        repository.login({permissions: "user_likes,email"}, show_response);
+    }
 
 </script>
 
