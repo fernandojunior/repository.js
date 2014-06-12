@@ -20,5 +20,6 @@ Use
 ===
 
 Just Load the script repository.js in your html file. See full examples in exameples folder.
-repository.js depends prototype_class.js and jQuery.
+repository.js depends prototype_class.js.
+repostitories/rest.js depends jQuery.
 repostitories/parse.js depends Parse.org javascript SDK.
