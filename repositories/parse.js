@@ -335,8 +335,6 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
         **/
         login: function(args, callback, error_callback){
             
-            console.log("ate aqui");
-            
             if (typeof args === "undefined"){
                 args = {};
             }
@@ -345,7 +343,7 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
             var log = "Logging or signing up a user through Facebook";
             
             if (typeof permissions === "undefined"){
-                permissions = "user_likes,email";
+                permissions = "email";
             }
 
             function login_callback(response){
@@ -408,6 +406,51 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
             }
 
             this.get({id: id}, get_callback, error_callback);
+            return;
+        },
+
+        /**
+        * Login or sign up a user through Facebook (openFB)
+        * @see https://github.com/fernandojunior/OpenFB
+        * @param args.permisions Facebook permissions
+        **/
+        loginWithOpenFB: function(permissions, callback, error_callback){
+
+            if (typeof permissions === "undefined"){
+                permissions = "email";
+            }
+
+            if (typeof openFB === "undefined"){
+                console.log("openFB was not loaded. See https://github.com/fernandojunior/OpenFB");
+                return;
+            }
+
+            var self = this;
+
+            openFB.login(
+                permissions, 
+                function(response){
+
+                    console.log("Logged in with openFB.");
+
+                    // setting the auth data for parse login
+                    var authData = {
+                        id: response.auth_response.user_id,
+                        access_token: response.auth_response.access_token,
+                        expiration_date: new Date(response.auth_response.expires_in * 1000 +
+                                                  (new Date()).getTime()).toJSON()
+                    };
+                    
+                    self.login({permissions: authData}, callback, error_callback);
+
+                },
+                function(error){
+                    if (typeof error_callback !== "undefined"){
+                        error_callback(error);
+                    }
+                }
+            )
+
             return;
         }
 
