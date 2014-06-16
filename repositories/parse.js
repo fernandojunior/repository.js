@@ -183,23 +183,28 @@ var ParseRepository = BaseRepository.extend({
    **/
    _handler : function (callback, error_callback, log){
        var calls = {
-           success: function(response){
-               console.log("Sucess: "+ log);
-
-               if (callback !== null && typeof callback !== "undefined"){
-                   callback(response);
-               }
-           },
-           error: function (error){
-               console.log("Error: "+ log + JSON.stringify(error));
-
-               if (error_callback !== null && typeof error_callback !== "undefined"){
-                   error_callback(error);
-               }
-           }
+           success: ParseRepository.handler(callback, "Success: " + log),
+           error: ParseRepository.handler(callback, "Error: " + log)
        }
 
        return calls;
+   },
+
+   handler: function(callback, log){
+       return function(){
+           
+           if (log){
+               console.log(log);
+           }
+           
+           if (callback !== null && typeof callback !== "undefined"){
+               
+               if (arguments.length === 1)               
+                   callback(arguments[0]);
+               else 
+                   callback(arguments);
+           }
+       }
    },
 
    /**
