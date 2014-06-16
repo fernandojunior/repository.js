@@ -12,11 +12,14 @@ var ParseRepository = BaseRepository.extend({
        * @param args.class Parse class. If setted then class_name not needed
        **/
        initialize: function (args){
-           this._class_name = args.class_name;
-           this._class = args.class;
            
-           if (typeof this._class_name !== "undefined"){
-               this._class = Parse.Object.extend(this._class_name);
+           if (args){           
+               this._class_name = args.class_name;
+               this._class = args.class;
+
+               if (typeof this._class_name !== "undefined"){
+                   this._class = Parse.Object.extend(this._class_name);
+               }
            }
            
        },
@@ -207,9 +210,7 @@ ParseRepository.User = ParseRepository.extend({
 
     prototype: {
         
-        initialize: function (){
-            this._class = Parse.User;
-        },
+        _class : Parse.User,
 
         /**
         * Create a new user. Before it does this, it also checks to make sure that both the username and email are unique
@@ -313,10 +314,6 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
         
         _util: Parse.FacebookUtils,
         
-        initialize: function (){
-            this.super("initialize");
-        },
-
         /**
         * @see ParseRepository.FacebookUser.login
         **/
