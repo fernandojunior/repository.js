@@ -8,6 +8,11 @@
 **/
 var BaseRepository = PrototypeClass.extend({
     
+    /**
+    * Repository Name
+    **/
+    name: null,
+    
     prototype: {
         
         getAll: function(callback, error_callback){
@@ -50,7 +55,7 @@ var BaseRepository = PrototypeClass.extend({
             this[method](method_args, callback, error_callback);
 
         }
-    
+
     }
 
 });
