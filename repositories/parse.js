@@ -71,7 +71,7 @@ var ParseRepository = BaseRepository.extend({
            var log = "Updating a parse object.";
 
            function get_callback(response){
-               response.save(data,  ParseRepository._handler(log, callback, error_callback));                
+               response.save(data,  ParseRepository._handler(callback, error_callback, log));                
            };
 
            this.get({id : args.id}, get_callback, error_callback);
@@ -86,7 +86,7 @@ var ParseRepository = BaseRepository.extend({
        post: function(args, callback, error_callback) {
            var data = args;         
            var log = "Creating a parse object in cloud.";           
-           this._create().save(data, ParseRepository._handler(log, callback, error_callback));
+           this._create().save(data, ParseRepository._handler(callback, error_callback, log));
            return;
        },
        
@@ -99,7 +99,7 @@ var ParseRepository = BaseRepository.extend({
            var log = "Deleting a parse object.";
        
            function get_callback(response){
-               response.destroy(ParseRepository._handler(log, callback, error_callback));
+               response.destroy(ParseRepository._handler(callback, error_callback, log));
            };
 
            this.get({id: id}, get_callback, error_callback);           
@@ -118,7 +118,7 @@ var ParseRepository = BaseRepository.extend({
                query.equalTo(key, args[key]);
            }
            
-           query.find(ParseRepository._handler(log, callback, error_callback));
+           query.find(ParseRepository._handler(callback, error_callback, log));
            return;
        },
        
@@ -134,7 +134,7 @@ var ParseRepository = BaseRepository.extend({
                query.equalTo(key, args[key]);
            }
            
-           query.first(ParseRepository._handler(log, callback, error_callback));
+           query.first(ParseRepository._handler(callback, error_callback, log));
            return;
        },
 
@@ -181,7 +181,7 @@ var ParseRepository = BaseRepository.extend({
    /**
    * Callback and error callback handler
    **/
-   _handler : function (log, callback, error_callback){
+   _handler : function (callback, error_callback, log){
        var calls = {
            success: function(response){
                console.log("Sucess: "+ log);
@@ -245,7 +245,7 @@ ParseRepository.User = ParseRepository.extend({
             var data = args;
             var user = this._create();
             var log = "Signing up a user.";
-            user.signUp(data, ParseRepository._handler(log, callback, error_callback));
+            user.signUp(data, ParseRepository._handler(callback, error_callback, log));
             return;
         },
 
@@ -269,7 +269,7 @@ ParseRepository.User = ParseRepository.extend({
             this._class.logIn(
                 username,
                 password,
-                ParseRepository._handler(log, callback, error_callback)
+                ParseRepository._handler(callback, error_callback, log)
             );
 
             return;
@@ -319,7 +319,7 @@ ParseRepository.User = ParseRepository.extend({
             var log = "Sending a request for reset the user passaword.";
             this._class.requestPasswordReset(
                 email,
-                ParseRepository._handler(log, callback, error_callback)
+                ParseRepository._handler(callback, error_callback, log)
             );
             return;
         }
@@ -385,7 +385,7 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
 
             this._util.logIn(
                 permissions,
-                ParseRepository._handler(log, login_callback, error_callback)
+                ParseRepository._handler(login_callback, error_callback, log)
             );
             return;
         },
@@ -405,7 +405,7 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
                     this._util.link(
                         response,
                         permissions,
-                        ParseRepository._handler(log, callback, error_callback)
+                        ParseRepository._handler(callback, error_callback, log)
                     );
                 }
             }
@@ -424,7 +424,7 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
 
             function get_callback(response){
                 this._util.unlink(
-                    response, ParseRepository._handler(log, callback, error_callback)
+                    response, ParseRepository._handler(callback, error_callback, log)
                 );                
             }
 
