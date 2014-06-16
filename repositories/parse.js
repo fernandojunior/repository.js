@@ -206,7 +206,7 @@ var ParseRepository = BaseRepository.extend({
 ParseRepository.User = ParseRepository.extend({
 
     prototype: {
-
+        
         initialize: function (){
             this._class = Parse.User;
         },
@@ -310,9 +310,11 @@ ParseRepository.User = ParseRepository.extend({
 ParseRepository.FacebookUser = ParseRepository.User.extend({
 
     prototype: {
-
+        
+        _util: Parse.FacebookUtils,
+        
         initialize: function (){
-            this._util = Parse.FacebookUtils;
+            this.super("initialize");
         },
 
         /**
