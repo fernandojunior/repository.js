@@ -68,6 +68,14 @@ var BaseView = PrototypeClass.extend({
     prototype: {
         
         /**
+        * View initializer
+        * @param data See BaseView#data
+        **/
+        initialize: function(data) {
+            this.data = data; // setting the request data
+        },
+        
+        /**
         * Nome do metodo do repositorio a ser executado
         **/
         method: null,

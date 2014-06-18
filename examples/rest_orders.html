@@ -48,11 +48,6 @@
 
                 method: "get",
 
-                // view initializer
-                initialize: function(data) {
-                    this.data = data; // setting the request data
-                },
-
                 // before call the API
                 before: function(){
 
@@ -77,10 +72,6 @@
         post: BaseView.extend({
             prototype: {
                 method: "post",
-
-                initialize: function(data){
-                    this.data = data; // data of the request
-                }
             }
 
         }),
@@ -89,10 +80,6 @@
         get_edit_form: BaseView.extend({
             prototype: {
                 method: "get",
-
-                initialize: function(args){
-                    this.data = {id: args.id};
-                },
 
                 success: function(response){
                     $("#content").html("html edit form" +  JSON.stringify(response));
@@ -105,10 +92,6 @@
             prototype: {
                 method: "put",
 
-                initialize: function(data){
-                    this.data = data;
-                },
-
                 success: function(response){
                     $("#content").html(JSON.stringify(response));
                 }    
@@ -119,10 +102,6 @@
         delete: BaseView.extend({
             prototype: {
                 method: "delete",
-
-                initialize: function(data){
-                    this.data = data;
-                },
 
                 success: function(response){
                     $("#content").html(JSON.stringify(response));
