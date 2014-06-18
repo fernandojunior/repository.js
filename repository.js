@@ -40,19 +40,19 @@ var BaseRepository = PrototypeClass.extend({
         **/
         _factory: function(args){
             var method = args.method;
-            var method_args = args.data;
-            var callback = args.callback;
-            var error_callback = args.error_callback;
-            
+            var method_data = args.data;
+            var callback = args.success;
+            var error_callback = args.error;
+
             if(method == null || typeof(method) === "undefined") {
                 method = "get"; // default method
             }
 
-            if(method_args === null || typeof(method_args) === "undefined") {
-                method_args = {};
+            if(method_data === null || typeof(method_data) === "undefined") {
+                method_data = {};
             }
 
-            this[method](method_args, callback, error_callback);
+            this[method](method_data, callback, error_callback);
 
         }
 
@@ -68,37 +68,37 @@ var BaseView = PrototypeClass.extend({
     prototype: {
         
         /**
-        * Nome do metodo da api a ser executado
+        * Nome do metodo do repositorio a ser executado
         **/
-        api: null,
+        method: null,
 
         /**
-        * Caso seja necessario, pode ser definido um dicionario em 'data' a ser passado como argumento ao metodo da api.
+        * Caso seja necessario, pode ser definido um dicionario 'data' a ser passado como argumento ao metodo do repositorio.
         **/
         data: null,
 
         /**
-        * Funcao que eh executada antes do metodo da api ser executado.
-        * @return Se retornar true, metodo da api eh executado.
+        * Funcao que eh executada antes do metodo do repositorio ser executado.
+        * @return Se retornar true, metodo eh executado.
         **/
         before: null,
 
         /**
-        * Funcao callback do metodo da api
-        * @param response Contem a resposta da execucao do metodo da api
+        * Funcao callback (sucesso) do metodo do repositorio
+        * @param response Contem a resposta da execucao do metodo
         **/
-        callback: null,
+        success: null,
         
         /**
-        * Funcao callback error do metodo da api
-        * @param response Contem a resposta da execucao do metodo da api
+        * Funcao callback error do metodo do repositorio
+        * @param response Contem a resposta da execucao do metodo
         **/
-        error_callback: null,
+        error: null,
 
         /**
-        * Funcao que eh executada apos o metodo da api
+        * Funcao que sera sempre executada, se existir
         **/
-        after: null,
+        finally: null,
 
         /**
         * Repository de onde a view ira requisitar/chamar por dados necessarios para sua renderizacao
@@ -113,28 +113,28 @@ var BaseView = PrototypeClass.extend({
 
             var before_result = true;
 
-            // funcao que eh executada antes do metodo da api ser executado
+            // funcao que eh executada antes do metodo do repositorio ser executado
             if (obj.before !== null && typeof(obj.before) !== "undefined"){
                 before_result = obj.before();
             }
             
-            // se for true, metodo da api eh executado
-            if(before_result === true){
-                
-                if(obj.repository !== null && typeof obj.repository !== "undefined"){                
+            // se for true, metodo do repositorio eh executado
+            if(before_result === true){                
+                if(obj.repository !== null && typeof obj.repository !== "undefined"){
                     obj.repository._factory({
-                        method: obj.api,
+                        method: obj.method,
                         data: obj.data,
-                        callback: obj.callback,
-                        error_callback: obj.error_callback
+                        success: obj.success,
+                        error: obj.error
                     });
-                }
-
-                // funcao que eh executada apos o metodo da api
-                if (obj.after !== null && typeof(obj.after) !== "undefined"){
-                    obj.after();
-                }
+                }                
             }
+            
+            // funcao que sera sempre executada
+            if (obj.finally !== null && typeof(obj.finally) !== "undefined"){
+                obj.finally();
+            }
+
         }
     }
 });
@@ -160,7 +160,7 @@ var BaseViewContainer = PrototypeClass.extend({
             args = {};
         }
 
-        var container = this;        
+        var container = this;
         var repository = container.repository;
         var view_class = container[view_name];
 
