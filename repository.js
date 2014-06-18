@@ -153,6 +153,21 @@ var BaseView = PrototypeClass.extend({
 var BaseViewContainer = PrototypeClass.extend({
     
     /**
+    * Mustache templates root path
+    **/
+    template_path: null,
+    
+    /**
+    * Renderiza um template, a partir do template_path, utilizando o Mustache e jQuery.
+    **/
+    render_template: function(template_name, data){
+        
+        var url = this.template_path + template_name + ".mustache", template;
+        $.ajax({url: url, async: false, success: function (data) { template = data; }});
+        return Mustache.render(template, data);
+    },
+    
+    /**
     * Repositorio do container
     **/
     repository: null,
