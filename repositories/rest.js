@@ -45,12 +45,12 @@ var RESTRepository = BaseRepository.extend ({
 
         /**
         * Chama o method GET da API para obter informacao de um recurso especifico.
-        * @param args.id O recurso com o ID especificado sera trazido como resposta a chamada da API
+        * @param data.id O recurso com o ID especificado sera trazido como resposta a chamada da API
         * @param callback A funcao de callback para a chamada. Aceita um argumento, na qual sera a resposta da API
         * @param error_callback A funcao de callback error para a chamada. Aceita um argumento, na qual sera a resposta da API
         **/
-        get: function(args, callback, error_callback) {
-            var id = args.id;
+        get: function(data, callback, error_callback) {
+            var id = data.id;
 
             if (typeof(id) === "undefined") {
                 return this.getAll(callback, error_callback);
@@ -62,38 +62,36 @@ var RESTRepository = BaseRepository.extend ({
 
         /**
         * Chama o method POST da API para criar um novo recurso.
-        * @param args.data Os dados do novo recurso que serao enviados pela requisicao para API
+        * @param data Os dados do novo recurso que serao enviados pela requisicao para API
         * @param callback A funcao de callback para a chamada. Aceita um argumento, na qual sera a resposta da API
         * @param error_callback A funcao de callback error para a chamada. Aceita um argumento, na qual sera a resposta da API
         **/
-        post: function(args, callback, error_callback) {
-            var data = args.data;
+        post: function(data, callback, error_callback) {
 
             return this.call({url: "/", type: "post", data: data}, callback, error_callback);
         },
 
         /**
         * Chama o method PUT da API para atualizar um determinado recurso.
-        * @param args.id O id do recurso a ser atualizado
-        * @param args.data Os dados do recurso a ser atualizado que serao enviados pela requisicao para API
+        * @param data.id O id do recurso a ser atualizado
+        * @param data... Os dados do recurso a ser atualizado que serao enviados pela requisicao para API
         * @param callback A funcao de callback para a chamada. Aceita um argumento, na qual sera a resposta da API
         * @param error_callback A funcao de callback error para a chamada. Aceita um argumento, na qual sera a resposta da API
         **/
-        put: function(args, callback, error_callback) {
-            var id = args.id;
-            var data = args.data;
+        put: function(data, callback, error_callback) {
+            var id = data.id;
 
             return this.call({url: "/" + id, type: "put", data: data}, callback, error_callback);
         },
 
         /**
         * Chama o method DELETE da API para remover um determinado recurso.
-        * @param args.id O id do recurso a ser removido
+        * @param data.id O id do recurso a ser removido
         * @param callback A funcao de callback para a chamada. Aceita um argumento, na qual sera a resposta da API
         * @param error_callback A funcao de callback error para a chamada. Aceita um argumento, na qual sera a resposta da API
         **/
-        delete: function(args, callback, error_callback) {    
-            var id = args.id;
+        delete: function(data, callback, error_callback) {    
+            var id = data.id;
 
             return this.call({url: "/" + id, type: "delete"}, callback, error_callback);
         },

@@ -49,8 +49,8 @@
                 method: "get",
 
                 // view initializer
-                initialize: function(args) {
-                    this.data = {id: args.id}; // setting the request data
+                initialize: function(data) {
+                    this.data = data; // setting the request data
                 },
 
                 // before call the API
@@ -78,8 +78,8 @@
             prototype: {
                 method: "post",
 
-                initialize: function(args){
-                    this.data = {data: args.data}; // data of the request
+                initialize: function(data){
+                    this.data = data; // data of the request
                 }
             }
 
@@ -105,8 +105,8 @@
             prototype: {
                 method: "put",
 
-                initialize: function(args){
-                    this.data = {id: args.id, data: args.data};
+                initialize: function(data){
+                    this.data = data;
                 },
 
                 success: function(response){
@@ -120,8 +120,8 @@
             prototype: {
                 method: "delete",
 
-                initialize: function(args){
-                    this.data = {id: args.id};
+                initialize: function(data){
+                    this.data = data;
                 },
 
                 success: function(response){
@@ -144,7 +144,7 @@
         });
 
         this.post('#/', function() {
-            OrderViews.render("post", {data: this.params});
+            OrderViews.render("post", this.params);
             this.redirect('#/');
         });
 
@@ -157,7 +157,7 @@
         });
 
         this.put('#/:id/edit', function() { 
-            OrderViews.render("put", {id: this.params['id'], data: this.params});
+            OrderViews.render("put", this.params);
             this.redirect('#/');            
         });
 
