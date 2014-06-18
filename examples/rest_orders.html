@@ -31,10 +31,10 @@
             prototype: {
 
                 // call the get method of API
-                api: "get", 
+                method: "get", 
 
                 // API callback
-                callback: function(response){
+                success: function(response){
                     $("#content").html("Index html" + JSON.stringify(response)); // redering the content
                 }
             }
@@ -46,7 +46,7 @@
 
             prototype: {
 
-                api: "get",
+                method: "get",
 
                 // view initializer
                 initialize: function(args) {
@@ -64,7 +64,7 @@
                     return true; // callback
                 },
 
-                callback: function(response){
+                success: function(response){
 
                     $("#content").html(JSON.stringify(response));
 
@@ -76,7 +76,7 @@
         // view class that will create a new order
         post: BaseView.extend({
             prototype: {
-                api: "post",
+                method: "post",
 
                 initialize: function(args){
                     this.data = {data: args.data}; // data of the request
@@ -88,13 +88,13 @@
         // view class that will render the content with the order edit form 
         get_edit_form: BaseView.extend({
             prototype: {
-                api: "get",
+                method: "get",
 
                 initialize: function(args){
                     this.data = {id: args.id};
                 },
 
-                callback: function(response){
+                success: function(response){
                     $("#content").html("html edit form" +  JSON.stringify(response));
                 }    
             }
@@ -103,13 +103,13 @@
         // view class that will update a resource
         put: BaseView.extend({
             prototype: {
-                api: "put",
+                method: "put",
 
                 initialize: function(args){
                     this.data = {id: args.id, data: args.data};
                 },
 
-                callback: function(response){
+                success: function(response){
                     $("#content").html(JSON.stringify(response));
                 }    
             }
@@ -118,13 +118,13 @@
         // view class that will delete a resource
         delete: BaseView.extend({
             prototype: {
-                api: "delete",
+                method: "delete",
 
                 initialize: function(args){
                     this.data = {id: args.id};
                 },
 
-                callback: function(response){
+                success: function(response){
                     $("#content").html(JSON.stringify(response));
                 }
             }

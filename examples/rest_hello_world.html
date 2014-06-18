@@ -11,30 +11,30 @@
     var HelloWorldView = BaseView.extend({
         prototype : {
             
-            api: "get", // request the API with get method
+            method: "get", // request the repository with get method
             
             // view initializer
             initialize: function(){
                 document.getElementById("content").innerHTML = "Hello ";
             },
             
+            // function to be executed before the call repository method
             before: function(){
                 console.log("Before send the call to the API");
-                return true; // call the API
+                return true; // true: the repository method will be called
             },
             
-            // API callback
-            callback: function(response){
-                // callback error           
+            // Success callback
+            success: function(response){
             },
         
-            // API error callback
-            error_callback: function(r){
+            // Error callback
+            error: function(r){
                 console.log("forced error");
             },
             
-            // after the callback
-            after: function(){
+            // always be executed
+            finally: function(){
                 var content = document.getElementById("content");
                 content.innerHTML += "World";
             },
