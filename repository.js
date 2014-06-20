@@ -8,53 +8,47 @@
 **/
 var BaseRepository = PrototypeClass.extend({
     
+    prototype: {
+
+        getAll: undefined,
+
+        get: undefined,
+
+        post: undefined,
+
+        put: undefined,
+
+        delete: undefined,
+    },
+
     /**
     * Repository Name
     **/
-    name: null,
-    
-    prototype: {
-        
-        getAll: function(callback, error_callback){
-            return null;
-        },
-        
-        get: function(args, callback, error_callback){
-            return null;
-        },
-        
-        post: function(args, callback, error_callback){
-            return null;
-        },
-        
-        put: function(args, callback, error_callback) {
-            return null;
-        },
-        
-        delete: function(args, callback, error_callback){
-            return null;
-        },
-        
-        /**
-        * Factory Method (partner) para acessar comportamentos do objeto
-        **/
-        _factory: function(args){
-            var method = args.method;
-            var method_data = args.data;
-            var callback = args.success;
-            var error_callback = args.error;
+    name: undefined,
 
-            if(method == null || typeof(method) === "undefined") {
-                method = "get"; // default method
-            }
+    /**
+    * Factory Method (partner) para invocar comportamentos do objeto
+    * @param repository Objeto/instancia
+    * @param args.method Nome do metodo a ser invocado
+    * @param args.data Dados a serem tratados pelo metodo
+    * @param args.success O callback de sucesso da requisicao.
+    * @param args.error O callback de erro para a requisicao.
+    **/
+    factory: function(repository, args){
+        var method = args.method;
+        var data = args.data;
+        var success = args.success;
+        var error = args.error;
 
-            if(method_data === null || typeof(method_data) === "undefined") {
-                method_data = {};
-            }
-
-            this[method](method_data, callback, error_callback);
-
+        if(typeof method === "undefined") {
+            method = "get"; // default method
         }
+
+        if(typeof data === "undefined") {
+            data = {};
+        }
+
+        return repository[method]({data: data, success: success, error: error});
 
     }
 
@@ -78,40 +72,40 @@ var BaseView = PrototypeClass.extend({
         /**
         * Nome do metodo do repositorio a ser executado
         **/
-        method: null,
+        method: undefined,
 
         /**
         * Caso seja necessario, pode ser definido um dicionario 'data' a ser passado como argumento ao metodo do repositorio.
         **/
-        data: null,
+        data: undefined,
 
         /**
         * Funcao que eh executada antes do metodo do repositorio ser executado.
         * @return Se retornar true, metodo eh executado.
         **/
-        before: null,
+        before: undefined,
 
         /**
         * Funcao callback (sucesso) do metodo do repositorio
         * @param response Contem a resposta da execucao do metodo
         **/
-        success: null,
+        success: undefined,
         
         /**
         * Funcao callback error do metodo do repositorio
         * @param response Contem a resposta da execucao do metodo
         **/
-        error: null,
+        error: undefined,
 
         /**
         * Funcao que sera sempre executada, se existir
         **/
-        finally: null,
+        finally: undefined,
 
         /**
         * Repository de onde a view ira requisitar/chamar por dados necessarios para sua renderizacao
         **/
-        repository: null,
+        repository: undefined,
 
         /**
         * Renderiza a view
@@ -122,24 +116,19 @@ var BaseView = PrototypeClass.extend({
             var before_result = true;
 
             // funcao que eh executada antes do metodo do repositorio ser executado
-            if (obj.before !== null && typeof(obj.before) !== "undefined"){
+            if (typeof obj.before !== "undefined"){
                 before_result = obj.before();
             }
             
             // se for true, metodo do repositorio eh executado
             if(before_result === true){                
-                if(obj.repository !== null && typeof obj.repository !== "undefined"){
-                    obj.repository._factory({
-                        method: obj.method,
-                        data: obj.data,
-                        success: obj.success,
-                        error: obj.error
-                    });
-                }                
+                if(typeof obj.repository !== "undefined"){
+                    BaseRepository.factory(obj.repository, obj);
+                }
             }
             
             // funcao que sera sempre executada
-            if (obj.finally !== null && typeof(obj.finally) !== "undefined"){
+            if (typeof obj.finally !== "undefined"){
                 obj.finally();
             }
 
@@ -153,9 +142,14 @@ var BaseView = PrototypeClass.extend({
 var BaseViewContainer = PrototypeClass.extend({
     
     /**
+    * Repositorio do container
+    **/
+    repository: undefined,
+    
+    /**
     * Mustache templates root path
     **/
-    template_path: null,
+    template_path: undefined,
     
     /**
     * Renderiza um template, a partir do template_path, utilizando o Mustache e jQuery.
@@ -168,18 +162,13 @@ var BaseViewContainer = PrototypeClass.extend({
     },
     
     /**
-    * Repositorio do container
-    **/
-    repository: null,
-    
-    /**
      * Renderiza uma view
      * @param view_name Nome da view a ser renderizada
      * @param args Argumentos que seram passadas ao construtor/inicializador da view
     **/
     render: function(view_name, args){
 
-        if (args === null || typeof(args) === "undefined"){
+        if (args === null || typeof args === "undefined"){
             args = {};
         }
 
