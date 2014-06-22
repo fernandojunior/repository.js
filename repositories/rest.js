@@ -11,34 +11,30 @@
  * DELETE; Delete a resource; http://example.com/api/orders/123 (delete order #123)
  *
 **/
-var RESTRepository = BaseRepository.extend ({
+var RESTRepository = Repository.extend({
     
     prototype: {
         
         /**
         * URL principal da API
         **/
-        _root_path: undefined,
+        root_path: undefined,
         
         /**
         * Define se as requisicoes serao assincronas ou nao. Default = True
         **/
-        _async: true,
+        async: true,
         
         /**
          * Inicializa o repositorio
          * @param args.root_path Define a url principal da API
          * @param args.async Se for true, as chamadas a API (requisoes) serao assincronas, caso for false serao sincronas.
         **/
-        initialize: function(args) {        
-            this._root_path = args.root_path;
+        initialize: function (args) {
+            this.root_path = args.root_path;
 
-            if (typeof args.async !== "undefined"){
-                this._async = args.async;
-            }
-
-            if(this._root_path.charAt(this._root_path.length -1) !== "/"){
-                this._root_path += "/";
+            if (typeof args.async !== "undefined") {
+                this.async = args.async;
             }
 
         },
@@ -48,7 +44,7 @@ var RESTRepository = BaseRepository.extend ({
         * @param args.success O callback de sucesso da requisicao. Aceita um argumento, na qual sera a resposta da API
         * @param args.error O callback de erro para a requisicao. Aceita um argumento, na qual sera a resposta da API
         **/
-        getAll: function(args){
+        getAll: function (args) {
             return this.request({path: "/", success: args.success, error: args.error});
         },
 
@@ -58,13 +54,13 @@ var RESTRepository = BaseRepository.extend ({
         * @param args.success O callback de sucesso da requisicao. Aceita um argumento, na qual sera a resposta da API
         * @param args.error O callback de erro para a requisicao. Aceita um argumento, na qual sera a resposta da API
         **/
-        get: function(args) {
+        get: function (args) {
             var data = args.data;
             var id = data.id;
             var success = args.success;
-            var error = args.error;            
+            var error = args.error;
 
-            if (typeof(id) === "undefined") {
+            if (typeof id === "undefined") {
                 return this.getAll({success: success, error: error});
             } else {
                 return this.request({path: "/" + id, success: success, error: error});
@@ -78,7 +74,7 @@ var RESTRepository = BaseRepository.extend ({
         * @param args.success O callback de sucesso da requisicao. Aceita um argumento, na qual sera a resposta da API
         * @param args.error O callback de erro para a requisicao. Aceita um argumento, na qual sera a resposta da API
         **/
-        post: function(args) {
+        post: function (args) {
             var data = args.data;
             var success = args.success;
             var error = args.error;
@@ -93,7 +89,7 @@ var RESTRepository = BaseRepository.extend ({
         * @param args.success O callback de sucesso da requisicao. Aceita um argumento, na qual sera a resposta da API
         * @param args.error O callback de erro para a requisicao. Aceita um argumento, na qual sera a resposta da API
         **/
-        put: function(args) {
+        put: function (args) {
             var data = args.data;
             var id = data.id;
             var success = args.success;
@@ -108,7 +104,7 @@ var RESTRepository = BaseRepository.extend ({
         * @param args.success O callback de sucesso da requisicao. Aceita um argumento, na qual sera a resposta da API
         * @param args.error O callback de erro para a requisicao. Aceita um argumento, na qual sera a resposta da API
         **/
-        delete: function(args) {    
+        delete: function (args) {
             var data = args.data;
             var id = data.id;
             var success = args.success;
@@ -119,14 +115,15 @@ var RESTRepository = BaseRepository.extend ({
 
         /**
         * Chama (requisita) uma url da API
-        * @param args.url (default === "") A url da api a ser chamada
+        * @param args.path (default === "") A url da api a ser chamada
         * @param args.type (default === get) Tipo (http method) da chamada: get, post, put, delete
         * @param args.data (opcional) Dicionario de dados a ser enviado pela chamada
+        * @param args.async (opcional) Define se a requisicao sera assincrona ou nao
         * @param args.success O callback de sucesso da requisicao. Aceita um argumento, na qual sera a resposta da API
         * @param args.error O callback de erro para a requisicao. Aceita um argumento, na qual sera a resposta da API
         * @return (if this.async === false) Retorna o resultado da chamada a api
         **/
-        request: function(args){
+        request: function (args) {
             var url = args.path;
             var type = args.type;
             var data = args.data;
@@ -134,9 +131,9 @@ var RESTRepository = BaseRepository.extend ({
             var success = args.success;
             var error = args.error;
 
-            if (typeof url === "undefined"){
+            if (typeof url === "undefined") {
                 url = "";
-            } else if (url.charAt(0) === "/"){
+            } else if (url.charAt(0) === "/") {
                 url = url.substring(1, url.length);
             }
 
@@ -144,17 +141,21 @@ var RESTRepository = BaseRepository.extend ({
                 type = "get";
             }
 
-            if (typeof(data) === "undefined") {
+            if (typeof data === "undefined") {
                 data = null;
             } else {
                 data = JSON.stringify(data);
             }
     
-            if (typeof async === "undefined"){
-                async = this._async;
+            if (typeof async === "undefined") {
+                async = this.async;
             }
 
-            url = this._root_path + url;
+            if (this.root_path.charAt(this.root_path.length - 1) !== "/") {
+                this.root_path += "/";
+            }
+
+            url = this.root_path + url;
 
             var request = {
                 url: url,
@@ -167,7 +168,7 @@ var RESTRepository = BaseRepository.extend ({
                 data: data,
                 error: function (jqXHR) {
                     
-                    if(typeof error !== "undefined"){
+                    if (typeof error !== "undefined") {
                         error(jqXHR);
                     }
                     
@@ -178,14 +179,14 @@ var RESTRepository = BaseRepository.extend ({
 
             var r;
 
-            $.ajax(request).done(function(reponse){
+            $.ajax(request).done(function (reponse) {
                 r = reponse;
 
-                if (typeof success !== "undefined"){
+                if (typeof success !== "undefined") {
                     success(reponse);
                 }
 
-            }); 
+            });
 
             // observacao: resultado so existira se a assincronizacao estiver desativada, ou seja, this.async === false
             return r;

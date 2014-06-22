@@ -2,7 +2,7 @@
 * Repositorio de objetos do Parse.org 
 * https://parse.com/docs/js_guide
 **/
-var ParseRepository = BaseRepository.extend({
+var ParseRepository = Repository.extend({
     
     /**
     * repository name
