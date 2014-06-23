@@ -20,7 +20,7 @@
     * View container for orders
     * Obs: http://example.com/api/orders/ is not a real REST API.
     **/
-    var OrderViews = BaseViewContainer.extend({
+    Views.register("order", {
 
         // RESTFUL API Repository for orders
         repository: RESTRepository.create({root_path: "http://example.com/api/orders/", async: true}),
@@ -52,7 +52,7 @@
                 before: function(){
 
                     if (typeof(this.data.id ) === "undefined"){
-                        OrderViews.render("index"); // redirecting
+                        Views.get("order").render("index"); // redirecting
                         return false; // don't callback
                     }
 
@@ -119,29 +119,29 @@
     var app = $.sammy(function() {
 
         this.get('#/', function() {            
-            OrderViews.render("index");
+            Views.get("order").render("index");
         });
 
         this.post('#/', function() {
-            OrderViews.render("post", this.params);
+            Views.get("order").render("post", this.params);
             this.redirect('#/');
         });
 
         this.get('#/:id', function() {
-            OrderViews.render("get", {id: this.params['id']});
+            Views.get("order").render("get", {id: this.params['id']});
         });
 
         this.get('#/:id/edit', function() { 
-            OrderViews.render("get_edit_form", {id: this.params['id']});
+            Views.get("order").render("get_edit_form", {id: this.params['id']});
         });
 
         this.put('#/:id/edit', function() { 
-            OrderViews.render("put", this.params);
+            Views.get("order").render("put", this.params);
             this.redirect('#/');            
         });
 
         this.get('#/:id/delete', function() {
-            OrderViews.render("delete", {id: this.params['id']});
+            Views.get("order").render("delete", {id: this.params['id']});
             this.redirect('#/');
         });
 

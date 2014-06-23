@@ -139,7 +139,7 @@ var BaseView = PrototypeClass.extend({
 /**
 * Container (singleton partner base) basico para armazenar views que por sua vez, podem acessar um repositorio
 **/
-var BaseViewContainer = PrototypeClass.extend({
+var Views = PrototypeClass.extend({
     
     /**
     * Repositorio do container
@@ -180,6 +180,25 @@ var BaseViewContainer = PrototypeClass.extend({
         obj.repository = repository;
         obj.render();
 
+    },
+    
+    /**
+    * Armazena as views
+    **/
+    objects: {},
+
+    /**
+    * Registra um container
+    * @param name nome do container
+    * @param child_properties Container, na qual, eh uma classe extendida de Views
+    **/
+    register: function (name, child_properties) {
+        this.objects[name] = Views.extend(child_properties);
+    },
+
+    get: function (name) {
+        return this.objects[name];
     }
+    
 
 });
