@@ -12,7 +12,29 @@ var Repository = PrototypeClass.extend({
     * Repository Name
     **/
     name: undefined,
-    
+
+    /**
+    * Armazena objetos
+    **/
+    objects: {},
+
+    /**
+    * Registra um objeto
+    * @param name nome do objeto
+    * @param object Objeto
+    **/
+    register: function (name, object) {
+        this.objects[name] = object;
+    },
+
+    /**
+    * Retorna um objeto pelo nome
+    * @param name O nome do objeto
+    **/
+    get: function (name) {
+        return this.objects[name];
+    },
+
     prototype: {
 
         getAll: undefined,
@@ -142,63 +164,69 @@ var BaseView = PrototypeClass.extend({
 var Views = PrototypeClass.extend({
     
     /**
-    * Repositorio do container
-    **/
-    repository: undefined,
-    
-    /**
-    * Mustache templates root path
-    **/
-    template_path: undefined,
-
-    /**
-    * Renderiza um template, a partir do template_path, utilizando o Mustache e jQuery.
-    **/
-    render_template: function (template_name, data) {
-        
-        var url = this.template_path + template_name + ".mustache", template;
-        $.ajax({url: url, async: false, success: function (data) { template = data; }});
-        return Mustache.render(template, data);
-    },
-
-    /**
-     * Renderiza uma view
-     * @param view_name Nome da view a ser renderizada
-     * @param args Argumentos que seram passadas ao construtor/inicializador da view
-    **/
-    render: function (view_name, args) {
-
-        if (args === null || typeof args === "undefined") {
-            args = {};
-        }
-
-        var container = this;
-        var repository = container.repository;
-        var view_class = container[view_name];
-
-        var obj = view_class.create(args); // instanciando objeto do tipo BaseView
-        obj.repository = repository;
-        obj.render();
-
-    },
-    
-    /**
     * Armazena as views
     **/
     objects: {},
 
     /**
-    * Registra um container
+    * Extende um container e cria uma instancia
     * @param name nome do container
     * @param child_properties Container, na qual, eh uma classe extendida de Views
     **/
     register: function (name, child_properties) {
-        this.objects[name] = Views.extend(child_properties);
+        this.objects[name] = Views.pextend(child_properties).create();
     },
 
+    /**
+    * Retorna uma instancia de Views
+    **/
     get: function (name) {
         return this.objects[name];
+    },
+    
+    prototype: {
+
+        /**
+        * Repositorio do container
+        **/
+        repository: undefined,
+
+        /**
+        * Mustache templates root path
+        **/
+        template_path: undefined,
+
+        /**
+        * Renderiza um template, a partir do template_path, utilizando o Mustache e jQuery.
+        **/
+        render_template: function (template_name, data) {
+
+            var url = this.template_path + template_name + ".mustache", template;
+            $.ajax({url: url, async: false, success: function (data) { template = data; }});
+            return Mustache.render(template, data);
+        },
+
+        /**
+         * Renderiza uma view
+         * @param view_name Nome da view a ser renderizada
+         * @param args Argumentos que seram passadas ao construtor/inicializador da view
+        **/
+        render: function (view_name, args) {
+
+            if (args === null || typeof args === "undefined") {
+                args = {};
+            }
+
+            var container = this;
+            var repository = container.repository;
+            var view_class = container[view_name];
+
+            var obj = view_class.create(args); // instanciando objeto do tipo BaseView
+            obj.repository = repository;
+            obj.render();
+
+        }
+
     }
     
-
 });

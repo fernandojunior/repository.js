@@ -16,6 +16,8 @@
 
 <script>
     
+    Repository.register("order", RESTRepository.create({root_path: "http://example.com/api/orders/", async: true}));
+
     /**
     * View container for orders
     * Obs: http://example.com/api/orders/ is not a real REST API.
@@ -23,7 +25,7 @@
     Views.register("order", {
 
         // RESTFUL API Repository for orders
-        repository: RESTRepository.create({root_path: "http://example.com/api/orders/", async: true}),
+        repository: Repository.get("order"),
 
         // view class that will render the content with order list
         index: BaseView.extend({
