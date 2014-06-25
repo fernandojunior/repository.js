@@ -7,11 +7,6 @@
 * Define um repositorio (design partner) abstrato
 **/
 var Repository = PrototypeClass.extend({
-    
-    /**
-    * Repository Name
-    **/
-    name: undefined,
 
     /**
     * Armazena objetos

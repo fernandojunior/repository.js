@@ -3,11 +3,6 @@
 * https://parse.com/docs/js_guide
 **/
 var ParseRepository = Repository.extend({
-    
-    /**
-    * repository name
-    **/
-    name: null,
 
     prototype: {
        
@@ -182,32 +177,12 @@ var ParseRepository = Repository.extend({
        }
    },
 
-   /**
-   * Repository objects dictionary for global use
-   **/
-   g: {},
-       
-   /**
-   * Create and register a ParseRepository (child) in global g.
-   **/
-   register: function(){       
-       if (name === null){
-           console.log("Repository name is not defined");
-       } else if (this === ParseRepository){
-           console.log("Wrong type of Parse Repository");
-       } else {
-           ParseRepository.g[this.name] = this.create();
-       }
-   }
-       
 });
 
 /**
 * Repositorio de usuarios parse. Baseado nas classes especiais Parse.User e Parse.FacebookUtils
 **/
 ParseRepository.User = ParseRepository.extend({
-
-    name: "user",
 
     prototype: {
         
@@ -304,8 +279,6 @@ ParseRepository.User = ParseRepository.extend({
 * Repositorio de usuarios Facebook. Baseado na classe Parse.FacebookUtils
 **/
 ParseRepository.FacebookUser = ParseRepository.User.extend({
-    
-    name: "facebook_user",
 
     prototype: {
         
@@ -449,6 +422,3 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
     }
 
 });
-
-ParseRepository.User.register();
-ParseRepository.FacebookUser.register();
