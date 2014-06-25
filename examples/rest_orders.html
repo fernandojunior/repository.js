@@ -28,87 +28,80 @@
         repository: Repository.get("order"),
 
         // view class that will render the content with order list
-        index: BaseView.extend({
+        index: View.pextend({
 
-            prototype: {
+            // call the get method of API
+            method: "get", 
 
-                // call the get method of API
-                method: "get", 
-
-                // API callback
-                success: function(response){
-                    $("#content").html("Index html" + JSON.stringify(response)); // redering the content
-                }
+            // API callback
+            success: function(response){
+                $("#content").html("Index html" + JSON.stringify(response)); // redering the content
             }
 
         }),
 
         // view class that will render the content with a order
-        get: BaseView.extend({
+        get: View.pextend({
 
-            prototype: {
+            method: "get",
 
-                method: "get",
+            // before call the API
+            before: function(){
 
-                // before call the API
-                before: function(){
-
-                    if (typeof(this.data.id ) === "undefined"){
-                        Views.get("order").render("index"); // redirecting
-                        return false; // don't callback
-                    }
-
-                    return true; // callback
-                },
-
-                success: function(response){
-
-                    $("#content").html(JSON.stringify(response));
-
+                if (typeof(this.data.id ) === "undefined"){
+                    Views.get("order").render("index"); // redirecting
+                    return false; // don't callback
                 }
+
+                return true; // callback
+            },
+
+            success: function(response){
+
+                $("#content").html(JSON.stringify(response));
+
             }
 
         }),
 
         // view class that will create a new order
-        post: BaseView.extend({
-            prototype: {
-                method: "post",
-            }
+        post: View.pextend({
+
+            method: "post",
 
         }),
 
         // view class that will render the content with the order edit form 
-        get_edit_form: BaseView.extend({
-            prototype: {
-                method: "get",
+        get_edit_form: View.pextend({
 
-                success: function(response){
-                    $("#content").html("html edit form" +  JSON.stringify(response));
-                }    
-            }
+            method: "get",
+
+            success: function(response){
+                $("#content").html("html edit form" +  JSON.stringify(response));
+            }    
+
         }),
 
         // view class that will update a resource
-        put: BaseView.extend({
-            prototype: {
-                method: "put",
+        put: View.pextend({
 
-                success: function(response){
-                    $("#content").html(JSON.stringify(response));
-                }    
-            }
+            method: "put",
+
+            success: function(response){
+                $("#content").html(JSON.stringify(response));
+            }    
+
         }),
 
         // view class that will delete a resource
-        delete: BaseView.extend({
-            prototype: {
-                method: "delete",
+        delete: View.pextend({
 
-                success: function(response){
-                    $("#content").html(JSON.stringify(response));
-                }
+            method: "delete",
+
+            success: function(response){
+                $("#content").html(JSON.stringify(response));
             }
+
         })
     })
     

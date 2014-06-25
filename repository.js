@@ -74,13 +74,13 @@ var Repository = PrototypeClass.extend({
 /**
  * Classe abstrata para criar views
 **/
-var BaseView = PrototypeClass.extend({
+var View = PrototypeClass.extend({
 
     prototype: {
 
         /**
         * View initializer
-        * @param data See BaseView#data
+        * @param data See View#data
         **/
         initialize: function (data) {
             this.data = data; // setting the request data
@@ -128,7 +128,7 @@ var BaseView = PrototypeClass.extend({
         * Renderiza a view
         **/
         render: function () {
-            var obj = this; // instancia do tipo BaseView
+            var obj = this; // instancia do tipo View
 
             var before_result = true;
 
@@ -216,7 +216,7 @@ var Views = PrototypeClass.extend({
             var repository = container.repository;
             var view_class = container[view_name];
 
-            var obj = view_class.create(args); // instanciando objeto do tipo BaseView
+            var obj = view_class.create(args); // instanciando objeto do tipo View
             obj.repository = repository;
             obj.render();
 
