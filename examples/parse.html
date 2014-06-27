@@ -26,13 +26,13 @@
     repository.getAll();
 
     repository.put({
-        id: "8Z384wpZmB", 
         data:{
+            objectId: "8Z384wpZmB",
             bairro: "Centro"
         }
     });
 
-    repository.get({id: "8Z384wpZmB"});
+    repository.get({data: {objectId: "8Z384wpZmB"}});
     
     /**
     * Loggin do usuario no parse pelo facebook
@@ -45,7 +45,7 @@
         }
 
         // permissions: permissoes do facebook
-        repository.login({permissions: "user_likes,email"}, show_response);
+        repository.login({data: {permissions: "user_likes,email"}, success: show_response});
     }
 
 </script>
