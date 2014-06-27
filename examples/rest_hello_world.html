@@ -8,36 +8,34 @@
 
 <script type="application/javascript">
     
-    var HelloWorldView = BaseView.extend({
-        prototype : {
+    var HelloWorldView = View.pextend({
             
-            method: "get", // request the repository with get method
+        method: "get", // request the repository with get method
 
-            // function to be executed before the call repository method
-            before: function(){
-                console.log("Before send the call to the API");
-                return true; // true: the repository method will be called
-            },
+        // function to be executed before the call repository method
+        before: function(){
+            console.log("Before send the call to the API");
+            return true; // true: the repository method will be called
+        },
+
+        // Success callback
+        success: function(response){
+        },
+
+        // Error callback
+        error: function(r){
+            console.log("forced error");
+        },
+
+        // always be executed
+        finally: function(){
+            var content = document.getElementById("content");
+            content.innerHTML += "World";
+        },
+
+        // RESTFUL API respository
+        repository: RESTRepository.create({root_path: "https://gist.github.com/fernandojunior"})
             
-            // Success callback
-            success: function(response){
-            },
-        
-            // Error callback
-            error: function(r){
-                console.log("forced error");
-            },
-            
-            // always be executed
-            finally: function(){
-                var content = document.getElementById("content");
-                content.innerHTML += "World";
-            },
-            
-            // RESTFUL API respository
-            repository: RESTRepository.create({root_path: "https://gist.github.com/fernandojunior"})
-            
-        }
     });    
     
     function init(){

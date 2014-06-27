@@ -17,8 +17,11 @@
 
     /*Iniciando objetos PARSE*/
     Parse.initialize("x","y");
+    
+    Repository.register("facebook_user", ParseRepository.FacebookUser.create());
+    Repository.register("evento", ParseRepository.create({class_name: "Eventos"}));
 
-    var repository = ParseRepository.create({class_name: "Eventos"});
+    var repository = Repository.get("evento");
 
     repository.getAll();
 
@@ -35,7 +38,7 @@
     * Loggin do usuario no parse pelo facebook
     **/
     function facebook_login() {
-        var repository = ParseRepository.g.facebook_user;
+        var repository = Repository.get("facebook_user");
 
         function show_response(response){
             console.log(JSON.stringify(response));

@@ -5,7 +5,9 @@
 var ParseRepository = Repository.extend({
 
     prototype: {
-       
+
+       _class: undefined,
+
        /**
        * Repository initializer
        * @param args.class_name Parse class name or
@@ -23,7 +25,7 @@ var ParseRepository = Repository.extend({
            }
            
        },
-       
+
        /**
        * Parse query object for the class
        **/
@@ -41,17 +43,19 @@ var ParseRepository = Repository.extend({
        /**
        * Retrieve all objects
        **/
-       getAll: function(callback, error_callback){           
-           return this.find(null, callback, error_callback);           
+       getAll: function(args){
+           return this.find(null, args.success, args.error);           
        },
-        
+
        /**
        * Retrieve only a object
        * @param args.id The object ID
        **/
-       get: function(args, callback, error_callback){
-           var id = args.id;
-           this.first({objectId : id}, callback, error_callback);
+       get: function(args){
+           var objectId = args.data.objectId;
+           var success = args.success;
+           var error = args.error;
+           this.first({data: {objectId : objectId}, success: success, error: error});
            return;
        },
        
@@ -60,15 +64,17 @@ var ParseRepository = Repository.extend({
        * @param args.id The object ID
        * @param args.data The new data of object
        **/
-       put: function(args, callback, error_callback){
-           var id = args.id;
-           var data = args.data;           
+       put: function(args){
+           var data = args.data;
+           var objectId = args.data.objectId;
+           var success = args.success;
+           var error = args.error;
 
            function get_callback(response){
-               response.save(data, {success: callback, error: error_callback});
+               response.save(data, {success: success, error: error});
            };
 
-           this.get({id : args.id}, get_callback, error_callback);
+           this.get({data: {objectId : objectId}, success: get_callback, error: error});
            return;
        },
 
@@ -76,9 +82,12 @@ var ParseRepository = Repository.extend({
        * Create a parse object
        * @param data The data of the new object
        **/
-       post: function(args, callback, error_callback) {
-           var data = args;           
-           this._create().save(data, {success: callback, error: error_callback});
+       post: function(args) {
+           var data = args.data;
+           var success = args.success;
+           var error = args.error;
+
+           this._create().save(data, {success: success, error: error});
            return;
        },
        
@@ -86,14 +95,16 @@ var ParseRepository = Repository.extend({
        * Delete a parse object
        * @param args.id The ID of the object that will be deleted
        **/
-       delete: function(args, callback, error_callback){
-           var id = args.id;
-       
+       delete: function(args){
+           var objectId = args.data.objectId;
+           var success = args.success;
+           var error = args.error;
+
            function get_callback(response){
-               response.destroy({success: callback, error: error_callback});
+               response.destroy({success: success, error: error});
            };
 
-           this.get({id: id}, get_callback, error_callback);
+           this.get({data: {objectId: objectId}, success: get_callback, error: error});
            return;
        },
 
@@ -101,25 +112,33 @@ var ParseRepository = Repository.extend({
         * Find objects
         * @param args The key : value sings
         **/        
-       find: function(args, callback, error_callback){           
+       find: function(args){
+           var data = args.data;
+           var success = args.success;
+           var error = args.error;
+
            var query = this._query();
-           for(var key in args){
-               query.equalTo(key, args[key]);
+           for(var key in data){
+               query.equalTo(key, data[key]);
            }
-           query.find({success: callback, error: error_callback});
+           query.find({success: success, error: error});
            return;
        },
-       
+
         /**
         * Find first object
         * @param args The key : value sings
         **/        
-       first: function(args, callback, error_callback){           
+       first: function(args){
+           var data = args.data;
+           var success = args.success;
+           var error = args.error;
+
            var query = this._query();
-           for(var key in args){
-               query.equalTo(key, args[key]);
+           for(var key in data){
+               query.equalTo(key, data[key]);
            }           
-           query.first({success: callback, error: error_callback});
+           query.first({success: success, error: error});
            return;
        },
 
@@ -161,21 +180,7 @@ var ParseRepository = Repository.extend({
         }
 
         return;
-   },
-       
-   /**
-   * Handler a callback
-   **/
-   handler: function(callback){
-       return function(){
-           if (callback !== null && typeof callback !== "undefined"){
-               if (arguments.length === 1)               
-                   callback(arguments[0]);
-               else 
-                   callback(arguments);
-           }
-       }
-   },
+   }
 
 });
 
@@ -195,18 +200,21 @@ ParseRepository.User = ParseRepository.extend({
         * @param args.email User email
         * @param args... Any data do you want to save
         **/
-        signup : function(args, callback, error_callback) {            
-            var data = args;
+        signup : function(args) {
+            var data = args.data;
+            var success = args.success;
+            var error = args.error;
+
             var user = this._create();
-            user.signUp(data, {success: callback, error: error_callback});
+            user.signUp(data, {success: success, error: error});
             return;
         },
 
         /**
         * Redirect to signup method
         **/
-        post : function(args, callback, error_callback){
-            return this.signUp(args, callback, error_callback);
+        post : function(args){
+            return this.signUp(args);
         },
 
         /**
@@ -214,15 +222,13 @@ ParseRepository.User = ParseRepository.extend({
         * @param args.username Username
         * @param args.password html input value Encrypted password
         **/
-        login : function(args, callback, error_callback){
-            var username = args.username;
-            var password = args.password;            
+        login : function(args){
+            var username = args.data.username;
+            var password = args.data.password;
+            var success = args.success;
+            var error = args.error;
 
-            this._class.logIn(
-                username,
-                password,
-                {success: callback, error: error_callback}
-            );
+            this._class.logIn(username, password, {success: success, error: error});
             return;
         },
 
@@ -232,27 +238,26 @@ ParseRepository.User = ParseRepository.extend({
         logout: function (){
             this._class.logOut();
         },
-        
+
         /**
         * Get the current user that is logged in the session (localStorage).
         **/
-        current: function(callback, error_callback){
+        current: function(args){
+            var success = args.success;
+            var error = args.error;
+
             var current_user = this._class.current();
 
             if (current_user) {
 
-                console.log("getting current user");
-
-                if (callback !== null && typeof callback !== "undefined"){
-                    callback(current_user);
+                if (success !== null && typeof success !== "undefined"){
+                    success(current_user);
                 }
 
             } else {
 
-                console.log("User is not logged in.");
-
-                if (error_callback !== null && typeof error_callback !== "undefined"){
-                    error_callback();
+                if (error !== null && typeof error !== "undefined"){
+                    error();
                 }
             }
 
@@ -263,11 +268,14 @@ ParseRepository.User = ParseRepository.extend({
         * Request a password reset to parse.org
         * @param args.email The user email needed to reset the password
         **/
-        reset_password : function(args, callback, error_callback){
-            var email = args.email;            
+        reset_password : function(args){
+            var email = args.data.email;
+            var success = args.success;
+            var error = args.error;
+
             this._class.requestPasswordReset(
                 email,
-                {success: callback, error: error_callback}
+                {success: success, error: error}
             );
             return;
         }
@@ -287,29 +295,26 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
         /**
         * @see ParseRepository.FacebookUser.login
         **/
-        signup : function(args, callback, error_callback) {
-            return this.login(args, callback, error_callback);
+        signup : function(args) {
+            return this.login(args);
         },
 
         /**
         * Redirect to signup method
         **/
-        post : function(args, callback, error_callback){
-            return this.login(args, callback, error_callback);
+        post : function(args){
+            return this.login(args);
         },
 
         /**
         * Login or sign up a user through Facebook
         * @param args.permisions Facebook permissions
         **/
-        login: function(args, callback, error_callback){
-            
-            if (typeof args === "undefined"){
-                args = {};
-            }
+        login: function(args){
+            var permissions = args.data.permissions;
+            var success = args.success;
+            var error = args.error;
 
-            var permissions = args.permissions;
-            
             if (typeof permissions === "undefined"){
                 permissions = "email";
             }
@@ -322,15 +327,15 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
                     console.log("User just logged in through Facebook!");
                 }
 
-                if (callback !== null && typeof callback !== "undefined"){
-                    callback(response);
+                if (success !== null && typeof success !== "undefined"){
+                    success(response);
                 }
 
             };
 
             this._util.logIn(
-                permissions, 
-                {success: login_callback, error: error_callback}
+                permissions,
+                {success: login_callback, error: error}
             );
             return;
         },
@@ -339,21 +344,23 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
         * Associate an existing Parse.User to a Facebook account
         * @param args.id User ID
         **/
-        link: function(args, callback, error_callback){            
-            var id = args.id;
-            var permissions = args.permissions;
-            
+        link: function(args){            
+            var objectId = args.data.objectId;
+            var permissions = args.data.permissions;
+            var success = args.success;
+            var error = args.error;
+
             function get_callback(response){
                 if (!this._util.isLinked(response)) {
                     this._util.link(
                         response,
                         permissions,
-                        {success: callback, error: error_callback}
+                        {success: success, error: error}
                     );
                 }
             }
-            
-            this.get({id: id}, get_callback, error_callback);
+
+            this.get({data: {objectId: objectId}, success: get_callback, error: error});
             return;
         },
 
@@ -361,16 +368,18 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
         * Unassociate an existing Parse.User to a Facebook account
         * @param args.id User object ID
         **/
-        unlink: function(args, callback, error_callback){
-            var id = args.id;
+        unlink: function(args){
+            var objectId = args.data.objectId;
+            var success = args.success;
+            var error = args.error;
 
             function get_callback(response){
                 this._util.unlink(
-                    response, {success: callback, error: error_callback}
-                );                
+                    response, {success: success, error: error}
+                ); 
             }
 
-            this.get({id: id}, get_callback, error_callback);
+            this.get({data: {objectId: objectId}, success: get_callback, error: error});
             return;
         },
 
@@ -379,7 +388,10 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
         * @see https://github.com/fernandojunior/OpenFB
         * @param args.permisions Facebook permissions
         **/
-        loginWithOpenFB: function(permissions, callback, error_callback){
+        loginWithOpenFB: function(args){
+            var permissions = args.data.permissions;
+            var success = args.success;
+            var error = args.error;
 
             if (typeof permissions === "undefined"){
                 permissions = "email";
@@ -393,7 +405,7 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
             var self = this;
 
             openFB.login(
-                permissions, 
+                permissions,
                 function(response){
 
                     console.log("Logged in with openFB.");
@@ -405,13 +417,13 @@ ParseRepository.FacebookUser = ParseRepository.User.extend({
                         expiration_date: new Date(response.auth_response.expires_in * 1000 +
                                                   (new Date()).getTime()).toJSON()
                     };
-                    
-                    self.login({permissions: authData}, callback, error_callback);
+
+                    self.login({data: {permissions: authData}, success: success, error: error});
 
                 },
-                function(error){
-                    if (typeof error_callback !== "undefined"){
-                        error_callback(error);
+                function(){
+                    if (typeof error !== "undefined"){
+                        error(arguments);
                     }
                 }
             )
