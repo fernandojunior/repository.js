@@ -9,14 +9,14 @@
 var Repository = PrototypeClass.extend({
 
     /**
-    * Armazena objetos
+    * Armazena repositories
     **/
     objects: {},
 
     /**
-    * Registra um objeto
-    * @param name nome do objeto
-    * @param object Objeto
+    * Registra uma instancia de repository
+    * @param name nome do repository
+    * @param object Objeto repository
     **/
     register: function (name, object) {
         this.objects[name] = object;
@@ -159,17 +159,18 @@ var View = PrototypeClass.extend({
 var Views = PrototypeClass.extend({
     
     /**
-    * Armazena as views
+    * Armazena instancia de container views
     **/
     objects: {},
 
     /**
-    * Extende um container e cria uma instancia
+    * Registra uma instancia de container views
     * @param name nome do container
-    * @param child_properties Container, na qual, eh uma classe extendida de Views
+    * @param object Objeto container
     **/
-    register: function (name, child_properties) {
-        this.objects[name] = Views.pextend(child_properties).create();
+    register: function (name, object) {
+        //this.objects[name] = Views.pextend(child_properties).create();
+        this.objects[name] = object;
     },
 
     /**
@@ -180,6 +181,19 @@ var Views = PrototypeClass.extend({
     },
     
     prototype: {
+
+        initialize: function(args){
+            args = args || {};
+
+            if (typeof args !== "undefined" && typeof args.repository !== "undefined"){
+                this.repository = args.repository;
+            }
+
+            if (typeof args !== "undefined" && typeof args.template_path !== "undefined"){
+                this.template_path = args.template_path;
+            }
+
+        },
 
         /**
         * Repositorio do container
