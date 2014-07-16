@@ -169,7 +169,6 @@ var Views = PrototypeClass.extend({
     * @param object Objeto container
     **/
     register: function (name, object) {
-        //this.objects[name] = Views.pextend(child_properties).create();
         this.objects[name] = object;
     },
 
@@ -231,7 +230,7 @@ var Views = PrototypeClass.extend({
             var view_class = container[view_name];
 
             var obj = view_class.create(args); // instanciando objeto do tipo View
-            obj.repository = repository;
+            obj.repository = repository; // "inversao de controle"
             obj.render();
 
         }
