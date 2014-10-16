@@ -1,6 +1,6 @@
 /**
 * repository.js
-* A simple lib for creating JavaScript applications using MTV (Model, Template, View) and Repository partners
+* A simple lib for create JavaScript applications. It is based on MTV (Model, Template, View) and Repository design partners.
 **/
 
 /**
